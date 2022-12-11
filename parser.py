@@ -42,12 +42,14 @@ def convert_string_expression_to_list(expression):
                     remind_sum_digit_action_before_minus = True
                     index_sum_digit_before_minuses = i - len(minus_list) - 1
                     # minus_list = []
-            if expression[i] == open_bracket:  # if 3--(
+            if expression[i] == open_bracket or expression[i] == negation_sign:  # if 3--(
                 if len(minus_list) > 0:
                     if len(minus_list) - i != 0:
-                        expression_list.append(subtraction_sign)
                         if (len(minus_list) - 1) % 2 != 0:
                             expression_list.append(subtraction_sign)
+                        else:
+                            expression_list.append(addition_sign)
+                        expression_list.append(subtraction_sign)
                     else:  # if in start
                         if len(minus_list) % 2 != 0:
                             expression_list.append(subtraction_sign)
@@ -55,19 +57,28 @@ def convert_string_expression_to_list(expression):
             if expression[i].isdigit() is True or expression[i] == dot:
                 if len(minus_list) > 0:
                     if len(minus_list) - i != 0:
-                        if expression[i - len(minus_list) - 1] in supported_operators:
+                        if expression[i - len(minus_list) - 1] in supported_operations:
                             if len(minus_list) % 2 != 0:
                                 if remind_sum_digit_action_before_minus:
                                     expression_list.append(subtraction_sign)
                                 else:
                                     number += subtraction_sign
                         else:
-                            expression_list.append(subtraction_sign)
-                            if (len(minus_list) - 1) % 2 != 0:
+                            if len(minus_list) == 1:
+                                expression_list.append(subtraction_sign)
+                            else:
                                 if remind_sum_digit_action_before_minus:
+                                    if (len(minus_list) - 1) % 2 != 0:
+                                        expression_list.append(subtraction_sign)
+                                    else:
+                                        expression_list.append(addition_sign)
                                     expression_list.append(subtraction_sign)
                                 else:
                                     number += subtraction_sign
+                                    if (len(minus_list) - 1) % 2 != 0:
+                                        expression_list.append(subtraction_sign)
+                                    else:
+                                        expression_list.append(addition_sign)
                     else:
                         if (len(minus_list)) % 2 != 0:
                             if remind_sum_digit_action_before_minus:
@@ -117,7 +128,7 @@ def convert_infix_to_postfix(expression_list):
                 if i == 0 or expression_list[i-1] == open_bracket:
                     expression_list[i] = unary_minus_sign
                 else:
-                    if type(expression_list[i + 1]) != float and expression_list[i - 1] != closed_bracket and type(expression_list[i - 1]) != float :
+                    if expression_list[i - 1] != closed_bracket and type(expression_list[i - 1]) != float :
                         expression_list[i] = unary_minus_sign
             if expression_list[i] == closed_bracket:
                 while stack[len(stack) - 1] != open_bracket:
@@ -129,7 +140,7 @@ def convert_infix_to_postfix(expression_list):
                 if len(stack) != 0:
                     while len(stack) != 0 and stack[len(stack) - 1] != open_bracket and OPERATION_DICT[
                         stack[len(stack) - 1]].order_in_operations >= \
-                            OPERATION_DICT[expression_list[i]].order_in_operations and not (expression_list[i] == sum_of_digits_sign and stack[len(stack) - 1] == unary_minus_sign):
+                            OPERATION_DICT[expression_list[i]].order_in_operations and not (expression_list[i] == sum_of_digits_sign and stack[len(stack) - 1] == unary_minus_sign) and not (expression_list[i] == negation_sign and stack[len(stack) - 1] == unary_minus_sign):
                         postfix_expression_list.append(stack.pop())
                 stack.append(expression_list[i])
     while len(stack) != 0:
