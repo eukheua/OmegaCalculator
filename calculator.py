@@ -2,7 +2,7 @@ from parser import *
 from operations import *
 from config import *
 
-
+# calculating func
 def evaluate_expression(expression):
     expression = clean_spaces(expression)
     expression = convert_string_expression_to_list(expression)
