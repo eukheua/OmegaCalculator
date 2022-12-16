@@ -1,120 +1,51 @@
-from config import *
-
-
-def clean_spaces(expression):
-    expression = expression.split(" ")
-    return "".join(expression)
-
-
-def check_if_sum_digits_and_minus_on_same_dimension(expression):
-    stack = []
-    found = False
-    for i in range(0,len(expression)):
-        if expression[i] == sum_of_digits_sign:
-            found = True
-            break
-        elif expression[i] == open_bracket:
-            stack.append(open_bracket)
-        elif expression[i] == closed_bracket:
-            if len(stack) == 0:
-                break
-            stack.pop()
-    if len(stack) != 0 or not found:
-        return False
-    return True
-
+from utils import *
 
 
 # fixxx () - interactions
-def convert_string_expression_to_list(expression):
+def convert_string_expression_to_list(expression: str) -> list:
+    """
+    the function converts raw input of the expression to a list that represents its actual meaning
+    :param expression: string representing the expression
+    :return: List that represents its actual meaning
+    """
     expression_list = []
     number = ""
     minus_list = []
-    sum_digit_list = []
-    sum_digits_minus_list = []
     remind_sum_digit_action_before_minus = False
-    index_sum_digit_before_minuses = 0
-    try:
-        for i in range(0, len(expression)):
-            if len(minus_list) > 0 and expression[i] != subtraction_sign:
-                if check_if_sum_digits_and_minus_on_same_dimension(expression[i::]):
-                    sum_digits_minus_list = minus_list
-                    remind_sum_digit_action_before_minus = True
-                    index_sum_digit_before_minuses = i - len(minus_list) - 1
-                    # minus_list = []
-            if expression[i] == open_bracket or expression[i] == negation_sign:  # if 3--(
-                if len(minus_list) > 0:
-                    if len(minus_list) - i != 0:
-                        if (len(minus_list) - 1) % 2 != 0:
-                            expression_list.append(subtraction_sign)
-                        else:
-                            expression_list.append(addition_sign)
-                        expression_list.append(subtraction_sign)
-                    else:  # if in start
-                        if len(minus_list) % 2 != 0:
-                            expression_list.append(subtraction_sign)
-                    minus_list = []
-            if expression[i].isdigit() is True or expression[i] == dot:
-                if len(minus_list) > 0:
-                    if len(minus_list) - i != 0:
-                        if expression[i - len(minus_list) - 1] in supported_operations:
-                            if len(minus_list) % 2 != 0:
-                                if remind_sum_digit_action_before_minus:
-                                    expression_list.append(subtraction_sign)
-                                else:
-                                    number += subtraction_sign
-                        else:
-                            if len(minus_list) == 1:
-                                expression_list.append(subtraction_sign)
-                            else:
-                                if remind_sum_digit_action_before_minus:
-                                    if (len(minus_list) - 1) % 2 != 0:
-                                        expression_list.append(subtraction_sign)
-                                    else:
-                                        expression_list.append(addition_sign)
-                                    expression_list.append(subtraction_sign)
-                                else:
-                                    number += subtraction_sign
-                                    if (len(minus_list) - 1) % 2 != 0:
-                                        expression_list.append(subtraction_sign)
-                                    else:
-                                        expression_list.append(addition_sign)
-                    else:
-                        if (len(minus_list)) % 2 != 0:
-                            if remind_sum_digit_action_before_minus:
-                                expression_list.append(subtraction_sign)
-                            else:
-                                number += subtraction_sign
-                    minus_list = []
-                number += expression[i]
-                if remind_sum_digit_action_before_minus:
-                    sum_digits_minus_list = []
-                    remind_sum_digit_action_before_minus = False
-                    index_sum_digit_before_minuses = 0
-            else:
-                if number != "":
-                    expression_list.append(float(number))
-                    number = ""
-                if expression[i] in supported_operators:
-                    if expression[i] == open_bracket:
-                        if len(minus_list) > 0:
-                            if len(minus_list) % 2 == 1:
-                                expression_list.append(subtraction_sign)
-                            minus_list = []
-                        expression_list.append(expression[i])
-                    elif expression[i] == subtraction_sign:
-                        minus_list.append(subtraction_sign)
-                    else:
-                        expression_list.append(expression[i])
-        if number != "":
-            expression_list.append(float(number))
-            number = ""
-        return expression_list
-    except:
-        raise ValueError("Not valid expression")
+    for i in range(0, len(expression)):
+        if len(minus_list) > 0 and expression[i] != subtraction_sign:
+            if check_if_sum_digits_and_minus_on_same_dimension(expression[i::]):
+                remind_sum_digit_action_before_minus = True
+        if expression[i] == open_bracket or expression[i] == negation_sign:  # if 3--(
+            check_how_to_add_minus_if_next_char_is_open_bracket_or_negation_sign(i, expression_list, minus_list)
+        if expression[i] in supported_operators and expression[i] != subtraction_sign:
+            if len(minus_list) > 0:
+                if expression[i] != open_bracket and expression[i] != negation_sign:
+                    raise Exception("- cant precede operators which arent ( or ~ ")
+        if expression[i].isdigit() is True or expression[i] == dot:
+            number = check_how_to_add_minus_if_next_char_is_type_float_or_dot(
+                number,
+                expression_list,
+                expression,
+                i,
+                minus_list,
+                remind_sum_digit_action_before_minus
+            )
+            if remind_sum_digit_action_before_minus:
+                remind_sum_digit_action_before_minus = False
+        else:
+            number = check_what_to_do_with_current_char(number, expression_list, expression, i, minus_list)
+    if number != "":
+        expression_list.append(float(number))
+    return expression_list
 
 
-def convert_infix_to_postfix(expression_list):
+def convert_infix_to_postfix(expression_list: list) -> list:
+    """
+    the function converts the infix representation of the expression to a postfix representation
+    :param expression_list: expression: list representing the expression
+    :return: postfix representation of expression
+    """
     stack = []
     postfix_expression_list = []
     for i in range(len(expression_list)):
@@ -122,14 +53,9 @@ def convert_infix_to_postfix(expression_list):
             postfix_expression_list.append(expression_list[i])
         else:
             if expression_list[i] == negation_sign:
-                if type(expression_list[i + 1]) != float:
-                    raise Exception("~ error")
+                check_negation_sign_potential_error(expression_list, i)
             if expression_list[i] == subtraction_sign:
-                if i == 0 or expression_list[i-1] == open_bracket:
-                    expression_list[i] = unary_minus_sign
-                else:
-                    if expression_list[i - 1] != closed_bracket and type(expression_list[i - 1]) != float :
-                        expression_list[i] = unary_minus_sign
+                check_potential_switch_of_minus_to_unary_minus(expression_list, i)
             if expression_list[i] == closed_bracket:
                 while stack[len(stack) - 1] != open_bracket:
                     postfix_expression_list.append(stack.pop())
@@ -138,9 +64,7 @@ def convert_infix_to_postfix(expression_list):
                 stack.append(expression_list[i])
             else:
                 if len(stack) != 0:
-                    while len(stack) != 0 and stack[len(stack) - 1] != open_bracket and OPERATION_DICT[
-                        stack[len(stack) - 1]].order_in_operations >= \
-                            OPERATION_DICT[expression_list[i]].order_in_operations and not (expression_list[i] == sum_of_digits_sign and stack[len(stack) - 1] == unary_minus_sign) and not (expression_list[i] == negation_sign and stack[len(stack) - 1] == unary_minus_sign):
+                    while check_convert_infix_to_postfix_loop_condition(stack, expression_list, i):
                         postfix_expression_list.append(stack.pop())
                 stack.append(expression_list[i])
     while len(stack) != 0:
