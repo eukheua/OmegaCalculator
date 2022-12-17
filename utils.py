@@ -1,13 +1,13 @@
 from config import *
 
 
-def clean_spaces(expression: str) -> str:
+def clean_white_chars(expression: str) -> str:
     """
     the function cleans all spaces in the expression received as a string
     :param expression: the string expression
     :return: the expression without spaces
     """
-    expression = expression.split(" ")
+    expression = expression.split()
     return "".join(expression)
 
 
@@ -36,8 +36,8 @@ def calculate_operator_in_middle(stack: list, operator: str) -> None:
             operand2 = stack.pop()
             operand1 = stack.pop()
         else:
-            operand2 = stack.pop()
-            operand1 = 0
+            operand2 = 0
+            operand1 = stack.pop()
     else:
         operand2 = stack.pop()
         operand1 = stack.pop()
@@ -82,7 +82,8 @@ def check_convert_infix_to_postfix_loop_condition(stack: list, expression_list: 
             OPERATION_DICT[stack[len(stack) - 1]].order_in_operations >= OPERATION_DICT[
                 expression_list[i]].order_in_operations and not
             (expression_list[i] == sum_of_digits_sign and stack[len(stack) - 1] == unary_minus_sign) and not
-            (expression_list[i] == negation_sign and stack[len(stack) - 1] == unary_minus_sign))
+            (expression_list[i] == negation_sign and stack[len(stack) - 1] == unary_minus_sign) and not
+            (expression_list[i] == exponent_sign and stack[len(stack) - 1] == unary_minus_sign))
 
 
 def check_if_sum_digits_and_minus_on_same_dimension(expression: str) -> bool:
@@ -238,7 +239,9 @@ def check_how_to_add_minus_if_next_char_is_type_float_or_dot_when_minus_not_firs
                 remind_sum_digit
             )
     else:
-        if expression[i - len(minus_list) - 1] == closed_bracket:
+        if expression[i - len(minus_list) - 1] == closed_bracket or\
+                expression[i - len(minus_list) - 1].isdigit() or\
+                expression[i - len(minus_list) - 1] == dot:
             number = if_before_minus_there_is_number_or_closed_bracket(
                 number,
                 expression_list,

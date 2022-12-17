@@ -63,17 +63,28 @@ class OperatorsInValidity(InValidity):
         return super.__str__(self)
 
 
-def main():
-    validation_list = []
-    validation_list.append(validate_brackets("((~~)"))
-    validation_list.append(validate_legal_symbols("((e~~)"))
-    validation_list.append(validate_operators("((~~)"))
+def assert_validations(expression):
+    valid = True
+    validation_list = [validate_brackets(expression),
+                       validate_legal_symbols(expression),
+                       validate_operators(expression),
+                       validate_decimal_point(expression)]
     for item in validation_list:
         if item is not True:
             valid = False
-            print("-----------------------------------------")
-            print(item[1])
-            print("-----------------------------------------")
+            print_invalidation_exception(item[1])
+    return valid
+
+
+def print_invalidation_exception(exception: CalculatorSyntaxError) -> None:
+    """
+    the function prints the message of syntax exceptions nicely
+    :param exception:  exception object
+    :return: None
+    """
+    print("-----------------------------------------")
+    print(exception)
+    print("-----------------------------------------")
 
 
 def validate_brackets(expression: str) -> tuple[bool, BracketsNotValid] | bool:
@@ -96,35 +107,14 @@ def validate_brackets(expression: str) -> tuple[bool, BracketsNotValid] | bool:
             if len(stack) == 0:
                 balanced = False
                 problem_index = i
-            stack.pop()
+            else:
+                stack.pop()
     if len(stack) > 0:
         balanced = False
     if not balanced:
         message = generate_message(expression, problem_index, BracketsNotValid)
         invalidity = BracketsNotValid(message)
         return False, invalidity
-    return True
-
-
-def validate_negation_signs(expression):
-    valid = True
-    problem_index = 0
-    for i in range(len(expression)):
-        if expression[i] == negation_sign and expression[i - 1] == negation_sign and i != 0:
-            valid = False
-        if expression[i] == negation_sign and (expression[i + 1].isdigit() or expression[i + 1] == dot) and \
-                i != len(expression - 1):
-            problem_index = i - 1
-            valid = False
-        if not valid:
-            break
-    if not valid:
-        message = "Invalidity Type: Negation sign adjacent to negation sign\n\n" \
-                  "Invalid ~ at: \n" \
-                  + expression[:problem_index] + "->" + expression[problem_index] + "<-" \
-                  + expression[problem_index + 1:len(expression)] \
-                  + "\n" + "index of ~: " + str(problem_index)
-        return False, message
     return True
 
 
@@ -138,13 +128,35 @@ def validate_legal_symbols(expression: str) -> tuple[bool, SymbolNotRecognized] 
     valid = True
     problem_index = 0
     for i in range(len(expression)):
-        if not expression[i].isdigit() and expression[i] not in supported_operators:
+        if not valid:
+            break
+        if not expression[i].isdigit() and expression[i] not in supported_operators and expression[i] != dot:
+            valid = False
+            problem_index = i
+    if not valid:
+        message = generate_message(expression, problem_index, SymbolNotRecognized)
+        invalidity = SymbolNotRecognized(message)
+        return False, invalidity
+    return True
+
+
+def validate_decimal_point(expression: str) -> tuple[bool, DecimalPointNotPositionedValidly] | bool:
+    """
+    the function validates that decimal point in case of rational numbers is inserted correctly
+    :param expression: the string expression
+    :return: if all decimal points in expression are inserted correctly True
+             else False and DecimalPointNotPositionedValidly exception Object
+    """
+    valid = True
+    problem_index = 0
+    for i in range(len(expression)-1):
+        if expression[i] == dot and expression[i+1] == dot:
             valid = False
             problem_index = i
             break
     if not valid:
-        message = generate_message(expression, problem_index, SymbolNotRecognized)
-        invalidity = SymbolNotRecognized(message)
+        message = generate_message(expression, problem_index, DecimalPointNotPositionedValidly)
+        invalidity = DecimalPointNotPositionedValidly(message)
         return False, invalidity
     return True
 
@@ -204,11 +216,17 @@ def check_operator_validity_middle(expression: str, i: int, valid: bool, problem
                 if OPERATION_DICT[expression[i - 1]].position != "right":
                     valid = False
                     problem_index = i
+        else:
+            valid = False
+            problem_index = i
         if i < len(expression) - 1:
             if expression[i + 1] in OPERATION_DICT:
                 if OPERATION_DICT[expression[i + 1]].position != "left" and expression[i + 1] != subtraction_sign:
                     valid = False
                     problem_index = i
+        else:
+            valid = False
+            problem_index = i
     return valid, problem_index
 
 
@@ -227,6 +245,9 @@ def check_operator_validity_left(expression: str, i: int, valid: bool, problem_i
                     and expression[i + 1] != dot and expression[i + 1] != subtraction_sign:
                 valid = False
                 problem_index = i
+        else:
+            valid = False
+            problem_index = i
     return valid, problem_index
 
 
@@ -249,6 +270,9 @@ def check_operator_validity_right(expression: str, i: int, valid: bool, problem_
                     and expression[i - 1] != closed_bracket:
                 valid = False
                 problem_index = i
+    else:
+        valid = False
+        problem_index = i
     return valid, problem_index
 
 
@@ -267,7 +291,7 @@ def check_opened_bracket_validity(expression: str, i: int, valid: bool, problem_
                 valid = False
                 problem_index = i
     if i > 0:
-        if expression[i - 1].isdigit is True or expression[i - 1] == dot:
+        if expression[i - 1].isdigit() is True or expression[i - 1] == dot:
             valid = False
             problem_index = i
     return valid, problem_index
@@ -288,7 +312,7 @@ def check_closed_bracket_validity(expression: str, i: int, valid: bool, problem_
                 valid = False
                 problem_index = i
     if i < len(expression) - 1:
-        if expression[i + 1].isdigit is True or expression[i + 1] == dot:
+        if expression[i + 1].isdigit() is True or expression[i + 1] == dot:
             valid = False
             problem_index = i
     return valid, problem_index
@@ -316,10 +340,16 @@ def generate_message(expression: str, problem_index: int, exception_class: objec
             + "\n" + "index of invalid symbol : " + str(problem_index)
     elif exception_class == OperatorsNotPositionedValidly:
         return "Invalidity Type: Operator is not positioned correctly\n\n" \
-            "Invalid operator at: \n" \
+            "Invalidly positioned operator at: \n" \
             + expression[:problem_index] + " ->" + expression[problem_index] + "<- " \
             + expression[problem_index + 1:len(expression)] \
-            + "\n" + "index of invalid operator : " + str(problem_index)
+            + "\n" + "index of invalidly positioned operator : " + str(problem_index)
+    elif exception_class == DecimalPointNotPositionedValidly:
+        return "Invalidity Type: Decimal Point is not positioned validly\n\n" \
+            "Invalid decimal point at: \n" \
+            + expression[:problem_index] + " ->" + expression[problem_index] + "<- " \
+            + expression[problem_index + 1:len(expression)] \
+            + "\n" + "index of invalid decimal point : " + str(problem_index)
     else:
         return "Invalidity Type: Unknown\n\n" \
             "Invalid input at: \n" \
@@ -327,6 +357,3 @@ def generate_message(expression: str, problem_index: int, exception_class: objec
             + expression[problem_index + 1:len(expression)] \
             + "\n" + "index of invalid input : " + str(problem_index)
 
-
-if __name__ == '__main__':
-    main()

@@ -4,14 +4,14 @@ from utils import *
 # calculating func
 
 
-def evaluate_expression(expression):
-    expression = clean_spaces(expression)
-    print(expression)
-    expression = convert_string_expression_to_list(expression)
-    print(expression)
-    expression = convert_infix_to_postfix(expression)
-    print(expression)
-    return calculate_postfix(expression)
+def print_result(result: float) -> None:
+    """
+    the function prints the result of the mathematical expression
+    :param result:  the result
+    :return: None
+    """
+    print("\n\n\n")
+    print("The result is : " + str(result))
 
 
 def calculate_postfix(expression: list) -> float:
@@ -22,6 +22,9 @@ def calculate_postfix(expression: list) -> float:
     """
     stack = []
     for item in expression:
+        if len(stack) >0:
+            if stack[0] < float('-inf') or stack[0] > float('inf'):
+                raise Exception("woowowowow")
         if type(item) == float:
             stack.append(item)
         else:
@@ -31,5 +34,5 @@ def calculate_postfix(expression: list) -> float:
             if OPERATION_DICT[operator].position == "left" or OPERATION_DICT[operator].position == "right":
                 calculate_operator_in_left_or_right(stack, operator)
     if len(stack) != 1:
-        raise RuntimeError("illegal expression")
+        raise ExpressionCantBeEvaluated("The expression Cant be evaluated")
     return stack[0]

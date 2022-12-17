@@ -1,3 +1,4 @@
+from exceptions import *
 class Operator(object):
     """
     this class represents an operator
@@ -55,7 +56,7 @@ def div(op1: float, op2: float) -> float:
     :return: the quotient of the two operands
     """
     if op2 == 0:
-        raise ZeroDivisionError("Division by zero")
+        raise ZeroDivisionError("Division by zero occurred")
     return op1 / op2
 
 
@@ -68,7 +69,7 @@ def power(op1: float, op2: float) -> float:
     """
     result = pow(op1, op2)
     if type(result) is complex:
-        raise Exception("complex")
+        raise ComplexNumberResult("complex numbers are not supported")
     return result
 
 
@@ -80,7 +81,7 @@ def mod(op1: float, op2: float) -> float:
         :return: the remnant of the division operation
     """
     if op2 == 0:
-        raise ZeroDivisionError("Division by zero")
+        raise ZeroDivisionError("Division by zero occurred")
     return op1 % op2
 
 
@@ -129,6 +130,22 @@ def neg(op: float) -> float:
     return -op
 
 
+def fac_wrapper(op: float) -> float:
+    """
+        the function wraps the factorial function
+        :param op: operand
+        :return: the factorial of the operand
+    """
+    if op < 0:
+        raise FactorialOnNegativeNumber("Factorial done on negative number")
+    elif int(op) != op:
+        raise FactorialOnRationalNumber("Factorial done on rational number")
+    try:
+        return fac(op)
+    except RecursionError as re:
+        raise FactorialResultCantBeAchievedDueToRecursionLimit("Recursion limit prevents calculating this factorial")
+
+
 def fac(op: float) -> float:
     """
         the function calculates the factorial of a float number
@@ -136,9 +153,9 @@ def fac(op: float) -> float:
         :return: the factorial of the operand
     """
     if op < 0:
-        raise Exception("Factorial done on negative number")
+        raise FactorialOnNegativeNumber("Factorial done on negative number")
     elif int(op) != op:
-        raise Exception("Factorial done on rational number")
+        raise FactorialOnRationalNumber("Factorial done on rational number")
     if op == 1 or op == 0:
         return 1.0
     return fac(op - 1) * op
