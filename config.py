@@ -31,7 +31,7 @@ maximum = Operator(maximum_sign, 5, "middle", maximum)
 minimum = Operator(minimum_sign, 5, "middle", minimum)
 average = Operator(average_sign, 5, "middle", avg)
 negation = Operator(negation_sign, 6, "left", neg)
-factorial = Operator(factorial_sign, 6, "right", fac)
+factorial = Operator(factorial_sign, 6, "right", fac_wrapper)
 sum_of_digits = Operator(sum_of_digits_sign, 6, "right", sum_digits)
 unary_minus = Operator(unary_minus_sign, 6, "left", neg)
 # creating the dictionary that will give me quick access to the attributes of each operator
