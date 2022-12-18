@@ -1,3 +1,4 @@
+# colors will work only in the editor environment
 RED = "\033[91m"
 WHITE = "\033[0m"
 BLACK = '\33[30m'
