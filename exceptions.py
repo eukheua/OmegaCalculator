@@ -181,28 +181,42 @@ class EmptyBrackets(CalculatorSyntaxError):
         return RED + str(self.__class__.__name__) + WHITE + "\n" + CalculatorSyntaxError.__str__(self)
 
 
-def print_exception(exception: Exception) -> None:
+def print_exception(exception: Exception | KeyboardInterrupt) -> None:
     """
     the function prints an exception
-    :param exception: the exception object
+    :param exception: the exception object or KeyboardInterrupt object
     :return: None
     """
     # built in exceptions
-    print("\n\nError>>>>>>")
-    if exception.__class__ == OverflowError:
+    print("-----------------------------------------")
+    print("Error>>>>>>")
+    if exception.__class__ == EOFError:
+        print(RED + exception.__class__.__name__ + WHITE)
+        print("exiting due to EOF input")
+        print("-----------------------------------------")
+    elif exception.__class__ == KeyboardInterrupt:
+        print(RED + exception.__class__.__name__ + WHITE)
+        print("exiting due to keyboard interrupt")
+        print("-----------------------------------------")
+    elif exception.__class__ == OverflowError:
         print(RED + exception.__class__.__name__ + WHITE)
         print("Result out of numeric bounds")
+        print("-----------------------------------------")
     elif exception.__class__ == ZeroDivisionError:
         print(RED + exception.__class__.__name__ + WHITE)
         print(exception)
+        print("-----------------------------------------")
     elif exception.__class__ == RecursionError:
         print(RED + exception.__class__.__name__ + WHITE)
         print("factorial")
         print(exception)
+        print("-----------------------------------------")
     elif exception.__class__ == Exception:
         print(RED + exception.__class__.__name__ + WHITE)
         print("Unknown Exception")
         print(exception)
+        print("-----------------------------------------")
     else:
         # custom exceptions
         print(exception)
+        print("-----------------------------------------")

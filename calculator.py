@@ -6,7 +6,12 @@ from exceptions import print_exception, FactorialOnNegativeNumber, FactorialOnRa
     ExpressionCantBeEvaluated, FactorialResultCantBeAchievedDueToRecursionLimit
 
 
-def evaluate(expression):
+def evaluate(expression: str) -> None | float:
+    """
+    this function receives the expression and returns the appropriate return value
+    :param expression: a string representation of expression
+    :return: the answer or None in case of validation or runtime error
+    """
     expression = clean_white_chars(expression)
     if not assert_validations(expression):
         return
@@ -31,8 +36,6 @@ def evaluate(expression):
         print_exception(r_e)
     except Exception as exception:
         print_exception(exception)
-    finally:
-        print("\nreached finally block looping again\n")
 
 
 def print_result(result: float) -> None:
@@ -41,8 +44,8 @@ def print_result(result: float) -> None:
     :param result:  the result
     :return: None
     """
-    print("\n\n\n")
-    print("The result is : " + str(result))
+    print("\nThe result is : " + str(result))
+    print("-----------------------------------------")
 
 
 def calculate_postfix(expression: list) -> float:

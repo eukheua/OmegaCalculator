@@ -1,5 +1,6 @@
 from calculator import evaluate
 
+
 def test_1():
     assert evaluate("1+1") == 2.0
 
@@ -150,5 +151,3 @@ def test_37():
 
 def test_38():
     assert evaluate("5$(4*-123#^2 /12.7@5.3)-100%(12*2.5)") == 6.0
-
-
