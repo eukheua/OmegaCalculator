@@ -1,7 +1,11 @@
-from utils import *
+from utils import check_if_sum_digits_and_minus_on_same_dimension, \
+    check_how_to_add_minus_if_next_char_is_open_bracket_or_negation_sign, \
+    check_how_to_add_minus_if_next_char_is_type_float_or_dot, check_what_to_do_with_current_char, \
+    check_negation_sign_potential_error, check_potential_switch_of_minus_to_unary_minus, \
+    check_convert_infix_to_postfix_loop_condition
+from config import *
 
 
-# fixxx () - interactions
 def convert_string_expression_to_list(expression: str) -> list:
     """
     the function converts raw input of the expression to a list that represents its actual meaning

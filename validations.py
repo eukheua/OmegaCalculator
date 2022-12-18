@@ -1,71 +1,14 @@
-from config import *
-from exceptions import *
-from exceptions import BracketsNotValid
-
-
-class InValidity(object):
-    def __init__(self, message: str) -> None:
-        """
-        the function initialize an InValidity object
-        :param message: the message
-        """
-        self.message = message
-
-    def __str__(self) -> str:
-        """
-        :return: the message
-        """
-        return self.message
-
-
-class BracketsInValidity(InValidity):
-    def __init__(self, message: str) -> None:
-        """
-        the function initialize an BracketsInValidity object
-        :param message: the message
-        """
-        super().__init__(message)
-
-    def __str__(self) -> str:
-        """
-        :return: the message
-        """
-        return super.__str__(self)
-
-
-class LegalSignsInValidity(InValidity):
-    def __init__(self, message: str) -> None:
-        """
-        the function initialize an BracketsInValidity object
-        :param message: the message
-        """
-        super().__init__(message)
-
-    def __str__(self) -> str:
-        """
-        :return: the message
-        """
-        return super.__str__(self)
-
-
-class OperatorsInValidity(InValidity):
-    def __init__(self, message: str) -> None:
-        """
-        the function initialize an BracketsInValidity object
-        :param message: the message
-        """
-        super().__init__(message)
-
-    def __str__(self) -> str:
-        """
-        :return: the message
-        """
-        return super.__str__(self)
+from config import open_bracket, closed_bracket, supported_operators, dot, supported_operations, OPERATION_DICT, \
+    subtraction_sign, negation_sign
+from colors import *
+from exceptions import BracketsNotBalanced, EmptyBrackets, SymbolNotRecognized, OperatorsNotPositionedValidly, \
+    DecimalPointNotPositionedValidly, CalculatorSyntaxError
 
 
 def assert_validations(expression):
     valid = True
-    validation_list = [validate_brackets(expression),
+    validation_list = [validate_brackets_balance(expression),
+                       validate_brackets_not_empty(expression),
                        validate_legal_symbols(expression),
                        validate_operators(expression),
                        validate_decimal_point(expression)]
@@ -87,12 +30,12 @@ def print_invalidation_exception(exception: CalculatorSyntaxError) -> None:
     print("-----------------------------------------")
 
 
-def validate_brackets(expression: str) -> tuple[bool, BracketsNotValid] | bool:
+def validate_brackets_balance(expression: str) -> tuple[bool, BracketsNotBalanced] | bool:
     """
-    the function validates brackets
+    the function validates brackets are balanced
     :param expression: the string expression
-    :return: if brackets are valid True
-             else False and BracketsNotValid exception Object
+    :return: if brackets are balanced True
+             else False and BracketsNotBalanced exception Object
     """
     stack = []
     balanced = True
@@ -112,8 +55,32 @@ def validate_brackets(expression: str) -> tuple[bool, BracketsNotValid] | bool:
     if len(stack) > 0:
         balanced = False
     if not balanced:
-        message = generate_message(expression, problem_index, BracketsNotValid)
-        invalidity = BracketsNotValid(message)
+        message = generate_message(expression, problem_index, BracketsNotBalanced)
+        invalidity = BracketsNotBalanced(message)
+        return False, invalidity
+    return True
+
+
+def validate_brackets_not_empty(expression: str) -> tuple[bool, EmptyBrackets] | bool:
+    """
+    the function validates brackets are not empty
+    :param expression: the string expression
+    :return: if brackets are not empty True
+             else False and EmptyBrackets exception Object
+    """
+    empty = False
+    problem_index = []
+    for i in range(len(expression)):
+        if False is True:
+            break
+        if expression[i] == open_bracket:
+            if i < len(expression) - 1:
+                if expression[i+1] == closed_bracket:
+                    empty = True
+                    problem_index = i, i+1
+    if empty:
+        message = generate_message(expression, problem_index, EmptyBrackets)
+        invalidity = EmptyBrackets(message)
         return False, invalidity
     return True
 
@@ -241,14 +208,27 @@ def check_operator_validity_left(expression: str, i: int, valid: bool, problem_i
     """
     if expression[i] == negation_sign:
         if i < len(expression) - 1:
-            if expression[i + 1].isdigit() is False \
-                    and expression[i + 1] != dot and expression[i + 1] != subtraction_sign:
+            if not check_negation_sign_validity(expression, i+1):
                 valid = False
                 problem_index = i
         else:
             valid = False
             problem_index = i
     return valid, problem_index
+
+
+def check_negation_sign_validity(expression: str, i: int) -> bool:
+    """
+    the function determines whether a negation sign is positioned correctly due to its special conditions
+    :param expression: string expression
+    :param i: index
+    :return: whether the ~ is in a valid place
+    """
+    while expression[i] == subtraction_sign:
+        i += 1
+    if not expression[i].isdigit() and expression[i] != dot:
+        return False
+    return True
 
 
 def check_operator_validity_right(expression: str, i: int, valid: bool, problem_index: int) -> tuple[bool, int]:
@@ -318,7 +298,7 @@ def check_closed_bracket_validity(expression: str, i: int, valid: bool, problem_
     return valid, problem_index
 
 
-def generate_message(expression: str, problem_index: int, exception_class: object) -> str:
+def generate_message(expression: str, problem_index: int | list, exception_class: object) -> str:
     """
     the function generates a message for exception
     :param expression: string expression
@@ -326,34 +306,42 @@ def generate_message(expression: str, problem_index: int, exception_class: objec
     :param exception_class: the class of the exception
     :return: exception message
     """
-    if exception_class == BracketsNotValid:
+    if exception_class == BracketsNotBalanced:
         return "Invalidity Type: Unbalanced brackets\n\n" \
             + "Unbalanced bracket at: \n" \
-            + expression[:problem_index] + " -->" + expression[problem_index] + "<-- " \
+            + expression[:problem_index] + f"{RED} -->{WHITE}" + expression[problem_index] + f"{RED}<-- {WHITE}" \
             + expression[problem_index + 1:len(expression)] \
-            + "\n" + "index of bracket: " + str(problem_index)
+            + "\n" + "index of unbalanced bracket: " + str(problem_index)
+    elif exception_class == EmptyBrackets:
+        return "Invalidity Type: Empty brackets\n\n" \
+            + "Empty bracket at: \n" \
+            + expression[:problem_index[0]] + f"{RED} -->{WHITE}"\
+               + expression[problem_index[0]]\
+               + expression[problem_index[1]]\
+               + f"{RED}<-- {WHITE}" \
+            + expression[problem_index[1] + 1:len(expression)] \
+            + "\n" + "indexes of empty brackets: " + str(problem_index[0]) + ", " + str(problem_index[1])
     elif exception_class == SymbolNotRecognized:
         return "Invalidity Type: Symbol is not recognized\n\n" \
             "Invalid symbol at: \n" \
-            + expression[:problem_index] + "->" + expression[problem_index] + "<-" \
+            + expression[:problem_index] + f"{RED} -->{WHITE}" + expression[problem_index] + f"{RED}<-- {WHITE}" \
             + expression[problem_index + 1:len(expression)] \
             + "\n" + "index of invalid symbol : " + str(problem_index)
     elif exception_class == OperatorsNotPositionedValidly:
         return "Invalidity Type: Operator is not positioned correctly\n\n" \
             "Invalidly positioned operator at: \n" \
-            + expression[:problem_index] + " ->" + expression[problem_index] + "<- " \
+            + expression[:problem_index] + f"{RED} -->{WHITE}" + expression[problem_index] + f"{RED}<-- {WHITE}" \
             + expression[problem_index + 1:len(expression)] \
             + "\n" + "index of invalidly positioned operator : " + str(problem_index)
     elif exception_class == DecimalPointNotPositionedValidly:
         return "Invalidity Type: Decimal Point is not positioned validly\n\n" \
             "Invalid decimal point at: \n" \
-            + expression[:problem_index] + " ->" + expression[problem_index] + "<- " \
+            + expression[:problem_index] + f"{RED} -->{WHITE}" + expression[problem_index] + f"{RED}<-- {WHITE}" \
             + expression[problem_index + 1:len(expression)] \
             + "\n" + "index of invalid decimal point : " + str(problem_index)
     else:
         return "Invalidity Type: Unknown\n\n" \
             "Invalid input at: \n" \
-            + expression[:problem_index] + " ->" + expression[problem_index] + "<- " \
+            + expression[:problem_index] + f"{RED} -->{WHITE}" + expression[problem_index] + f"{RED}<-- {WHITE}" \
             + expression[problem_index + 1:len(expression)] \
             + "\n" + "index of invalid input : " + str(problem_index)
-
