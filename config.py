@@ -1,5 +1,4 @@
-from operations import *
-
+from operations import Operator, add, sub, mul, div, power, mod, maximum, minimum, avg, neg, fac_wrapper, sum_digits
 
 # constants of all operators and symbols used
 open_bracket = '('

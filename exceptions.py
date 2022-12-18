@@ -1,3 +1,6 @@
+from colors import *
+
+
 class CalculatorSyntaxError(Exception):
     def __init__(self, message):
         """
@@ -40,7 +43,7 @@ class FactorialOnNegativeNumber(CalculatorArithmeticError):
         """
         :return: the message
          """
-        return str(self.__class__.__name__) + "\n" + CalculatorArithmeticError.__str__(self)
+        return RED + str(self.__class__.__name__) + WHITE + "\n" + CalculatorArithmeticError.__str__(self)
 
 
 class ExpressionCantBeEvaluated(CalculatorArithmeticError):
@@ -55,7 +58,7 @@ class ExpressionCantBeEvaluated(CalculatorArithmeticError):
         """
         :return: the message
          """
-        return str(self.__class__.__name__) + "\n" + CalculatorArithmeticError.__str__(self)
+        return RED + str(self.__class__.__name__) + WHITE + "\n" + CalculatorArithmeticError.__str__(self)
 
 
 class FactorialOnRationalNumber(CalculatorArithmeticError):
@@ -70,7 +73,7 @@ class FactorialOnRationalNumber(CalculatorArithmeticError):
         """
         :return: the message
          """
-        return str(self.__class__.__name__) + "\n" + CalculatorArithmeticError.__str__(self)
+        return RED + str(self.__class__.__name__) + WHITE + "\n" + CalculatorArithmeticError.__str__(self)
 
 
 class FactorialResultCantBeAchievedDueToRecursionLimit(CalculatorArithmeticError):
@@ -85,7 +88,7 @@ class FactorialResultCantBeAchievedDueToRecursionLimit(CalculatorArithmeticError
         """
         :return: the message
          """
-        return str(self.__class__.__name__) + "\n" + CalculatorArithmeticError.__str__(self)
+        return RED + str(self.__class__.__name__) + WHITE + "\n" + CalculatorArithmeticError.__str__(self)
 
 
 class ComplexNumberResult(CalculatorArithmeticError):
@@ -100,22 +103,7 @@ class ComplexNumberResult(CalculatorArithmeticError):
         """
         :return: the message
          """
-        return str(self.__class__.__name__) + "\n" + CalculatorArithmeticError.__str__(self)
-
-
-class NegationNotAdjacentToNumber(CalculatorSyntaxError):
-    def __init__(self, message):
-        """
-        the function initialize an NegationNotAdjacentToNumber object
-        :param message: the message
-        """
-        super().__init__(message)
-
-    def __str__(self):
-        """
-        :return: the message
-         """
-        return str(self.__class__) + "\n" + super.__str__(self)
+        return RED + str(self.__class__.__name__) + WHITE + "\n" + CalculatorArithmeticError.__str__(self)
 
 
 class OperatorsNotPositionedValidly(CalculatorSyntaxError):
@@ -130,7 +118,7 @@ class OperatorsNotPositionedValidly(CalculatorSyntaxError):
         """
         :return: the message
          """
-        return str(self.__class__.__name__) + "\n" + CalculatorSyntaxError.__str__(self)
+        return RED + str(self.__class__.__name__) + WHITE + "\n" + CalculatorSyntaxError.__str__(self)
 
 
 class DecimalPointNotPositionedValidly(CalculatorSyntaxError):
@@ -145,7 +133,7 @@ class DecimalPointNotPositionedValidly(CalculatorSyntaxError):
         """
         :return: the message
          """
-        return str(self.__class__.__name__) + "\n" + CalculatorSyntaxError.__str__(self)
+        return RED + str(self.__class__.__name__) + WHITE + "\n" + CalculatorSyntaxError.__str__(self)
 
 
 class SymbolNotRecognized(CalculatorSyntaxError):
@@ -160,13 +148,13 @@ class SymbolNotRecognized(CalculatorSyntaxError):
         """
         :return: the message
          """
-        return str(self.__class__.__name__) + "\n" + CalculatorSyntaxError.__str__(self)
+        return RED + str(self.__class__.__name__) + WHITE + "\n" + CalculatorSyntaxError.__str__(self)
 
 
-class BracketsNotValid(CalculatorSyntaxError):
+class BracketsNotBalanced(CalculatorSyntaxError):
     def __init__(self, message):
         """
-        the function initialize an BracketsNotValid object
+        the function initialize an BracketsNotBalanced object
         :param message: the message
         """
         super().__init__(message)
@@ -175,7 +163,22 @@ class BracketsNotValid(CalculatorSyntaxError):
         """
         :return: the message
          """
-        return str(self.__class__.__name__) + "\n" + CalculatorSyntaxError.__str__(self)
+        return RED + str(self.__class__.__name__) + WHITE + "\n" + CalculatorSyntaxError.__str__(self)
+
+
+class EmptyBrackets(CalculatorSyntaxError):
+    def __init__(self, message):
+        """
+        the function initialize an EmptyBrackets object
+        :param message: the message
+        """
+        super().__init__(message)
+
+    def __str__(self):
+        """
+        :return: the message
+         """
+        return RED + str(self.__class__.__name__) + WHITE + "\n" + CalculatorSyntaxError.__str__(self)
 
 
 def print_exception(exception: Exception) -> None:
@@ -187,18 +190,17 @@ def print_exception(exception: Exception) -> None:
     # built in exceptions
     print("\n\nError>>>>>>")
     if exception.__class__ == OverflowError:
-        print(exception.__class__.__name__)
-        print("Result too large")
-        print(exception)
+        print(RED + exception.__class__.__name__ + WHITE)
+        print("Result out of numeric bounds")
     elif exception.__class__ == ZeroDivisionError:
-        print(exception.__class__.__name__)
+        print(RED + exception.__class__.__name__ + WHITE)
         print(exception)
     elif exception.__class__ == RecursionError:
-        print(exception.__class__.__name__)
+        print(RED + exception.__class__.__name__ + WHITE)
         print("factorial")
         print(exception)
     elif exception.__class__ == Exception:
-        print(exception.__class__.__name__)
+        print(RED + exception.__class__.__name__ + WHITE)
         print("Unknown Exception")
         print(exception)
     else:

@@ -1,4 +1,5 @@
-from config import *
+from config import OPERATION_DICT, subtraction_sign, open_bracket, unary_minus_sign, supported_operations, \
+    negation_sign, sum_of_digits_sign, closed_bracket, addition_sign, dot, supported_operators
 
 
 def clean_white_chars(expression: str) -> str:
@@ -82,8 +83,7 @@ def check_convert_infix_to_postfix_loop_condition(stack: list, expression_list: 
             OPERATION_DICT[stack[len(stack) - 1]].order_in_operations >= OPERATION_DICT[
                 expression_list[i]].order_in_operations and not
             (expression_list[i] == sum_of_digits_sign and stack[len(stack) - 1] == unary_minus_sign) and not
-            (expression_list[i] == negation_sign and stack[len(stack) - 1] == unary_minus_sign) and not
-            (expression_list[i] == exponent_sign and stack[len(stack) - 1] == unary_minus_sign))
+            (expression_list[i] == negation_sign and stack[len(stack) - 1] == unary_minus_sign))
 
 
 def check_if_sum_digits_and_minus_on_same_dimension(expression: str) -> bool:

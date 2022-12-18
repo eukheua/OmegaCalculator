@@ -1,4 +1,7 @@
-from exceptions import *
+from exceptions import ComplexNumberResult, FactorialOnNegativeNumber, FactorialOnRationalNumber, \
+    FactorialResultCantBeAchievedDueToRecursionLimit
+
+
 class Operator(object):
     """
     this class represents an operator
@@ -142,7 +145,7 @@ def fac_wrapper(op: float) -> float:
         raise FactorialOnRationalNumber("Factorial done on rational number")
     try:
         return fac(op)
-    except RecursionError as re:
+    except RecursionError:
         raise FactorialResultCantBeAchievedDueToRecursionLimit("Recursion limit prevents calculating this factorial")
 
 
@@ -152,10 +155,6 @@ def fac(op: float) -> float:
         :param op: operand
         :return: the factorial of the operand
     """
-    if op < 0:
-        raise FactorialOnNegativeNumber("Factorial done on negative number")
-    elif int(op) != op:
-        raise FactorialOnRationalNumber("Factorial done on rational number")
     if op == 1 or op == 0:
         return 1.0
     return fac(op - 1) * op

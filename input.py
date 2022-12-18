@@ -1,7 +1,4 @@
-from calculator import *
-from validations import *
-
-# fix ()
+from calculator import evaluate, print_result
 
 
 def main():
@@ -26,33 +23,10 @@ def main():
             else:
                 running = False
                 exit(0)
-        expression = clean_white_chars(expression)
-        if not assert_validations(expression):
-            continue
-        expression = convert_string_expression_to_list(expression)
-        expression = convert_infix_to_postfix(expression)
-        try:
-            result = calculate_postfix(expression)
+        result = evaluate(expression)
+        if result is not None:
             print_result(result)
-        except ZeroDivisionError as z_d_e:
-            print_exception(z_d_e)
-        except FactorialOnNegativeNumber as f_o_n_n:
-            print_exception(f_o_n_n)
-        except FactorialOnRationalNumber as f_o_r_n:
-            print_exception(f_o_r_n)
-        except ComplexNumberResult as c_n_r:
-            print_exception(c_n_r)
-        except ExpressionCantBeEvaluated as e_c_b_e:
-            print_exception(e_c_b_e)
-        except OverflowError as o_f_e:
-            print_exception(o_f_e)
-        except FactorialResultCantBeAchievedDueToRecursionLimit as r_e:
-            print_exception(r_e)
-        except Exception as exception:
-            print_exception(exception)
-        finally:
             expression = ""
-            print("\nreached finally block looping again\n")
 
 
 if __name__ == "__main__":
