@@ -1,5 +1,5 @@
 # OmegaCalculator
-Concluding task of python studies
+Concluding task of python studies - chose to implement it with system 1 (אסכולה 1)
 Hi Potential user.
 The git repository you are visiting right now contains files and modules for a calculator based on command line input.
 The modules and their importance are:
