@@ -177,7 +177,7 @@ def test_40():
     assert evaluate("(5+6-7*8+9^2)/2-38&36+(10 @2---10#)*~1") == -23.0
 
 
-# 41 - 44 simple syntax errors
+# 41 - 45 simple syntax errors
 def test_41():
     error = validate_legal_symbols("6^3e")
     assert error[0] is False
@@ -197,6 +197,12 @@ def test_43():
 
 
 def test_44():
-    error = validate_brackets_not_empty("4..5+4-()")
+    error = validate_brackets_not_empty("4.5+4-()")
     assert error[0] is False
     assert type(error[1]) == EmptyBrackets
+
+
+def test_45():
+    error = validate_decimal_point("4..2+6")
+    assert error[0] is False
+    assert type(error[1]) == DecimalPointNotPositionedValidly
