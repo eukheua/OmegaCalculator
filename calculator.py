@@ -13,6 +13,8 @@ def evaluate(expression: str) -> None | float:
     :return: the answer or None in case of validation or runtime error
     """
     expression = clean_white_chars(expression)
+    if expression == "":
+        return
     if not assert_validations(expression):
         return
     expression = convert_string_expression_to_list(expression)

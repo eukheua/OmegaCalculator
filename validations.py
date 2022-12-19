@@ -5,7 +5,13 @@ from exceptions import BracketsNotBalanced, EmptyBrackets, SymbolNotRecognized, 
     DecimalPointNotPositionedValidly, CalculatorSyntaxError
 
 
-def assert_validations(expression):
+def assert_validations(expression: str) -> bool:
+    """
+    the function is responsible for operating the validation functions and print them to screen
+    if one invalidation pops it will return False else True
+    :param expression:
+    :return: if all validations are passed successfully True else False
+    """
     valid = True
     validation_list = [validate_brackets_balance(expression),
                        validate_brackets_not_empty(expression),
@@ -170,10 +176,18 @@ def check_operator_validity_middle(expression: str, i: int, valid: bool, problem
     :return: whether the operator is in a valid place and the position of the error
     """
     if expression[i] == subtraction_sign:
+        if all(ch in subtraction_sign for ch in expression):
+            valid = False
+            problem_index = i
         if i < len(expression) - 1:
             if expression[i + 1] == closed_bracket:
                 valid = False
                 problem_index = i
+            if expression[i + 1] in OPERATION_DICT and expression[i+1] != subtraction_sign\
+                    and expression[i+1] != negation_sign:
+                valid = False
+                problem_index = i
+
     else:
         if i > 0:
             if expression[i - 1] == open_bracket:

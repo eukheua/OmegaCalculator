@@ -52,4 +52,3 @@ def start_calculator() -> None:
         if result is not None:
             print_result(result)
             expression = ""
-

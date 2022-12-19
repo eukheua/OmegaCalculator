@@ -22,10 +22,6 @@ def convert_string_expression_to_list(expression: str) -> list:
                 remind_sum_digit_action_before_minus = True
         if expression[i] == open_bracket or expression[i] == negation_sign:  # if 3--(
             check_how_to_add_minus_if_next_char_is_open_bracket_or_negation_sign(i, expression_list, minus_list)
-        if expression[i] in supported_operators and expression[i] != subtraction_sign:
-            if len(minus_list) > 0:
-                if expression[i] != open_bracket and expression[i] != negation_sign:
-                    raise Exception("- cant precede operators which arent ( or ~ ")
         if expression[i].isdigit() is True or expression[i] == dot:
             number = check_how_to_add_minus_if_next_char_is_type_float_or_dot(
                 number,
