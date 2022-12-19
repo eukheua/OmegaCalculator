@@ -20,7 +20,7 @@ def convert_string_expression_to_list(expression: str) -> list:
         if len(minus_list) > 0 and expression[i] != subtraction_sign:
             if check_if_sum_digits_and_minus_on_same_dimension(expression[i::]):
                 remind_sum_digit_action_before_minus = True
-        if expression[i] == open_bracket or expression[i] == negation_sign:  # if 3--(
+        if expression[i] == open_bracket or expression[i] == negation_sign:
             check_how_to_add_minus_if_next_char_is_open_bracket_or_negation_sign(i, expression_list, minus_list)
         if expression[i].isdigit() is True or expression[i] == dot:
             number = check_how_to_add_minus_if_next_char_is_type_float_or_dot(
