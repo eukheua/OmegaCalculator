@@ -171,3 +171,32 @@ def test_38():
 
 def test_39():
     assert evaluate("5$(4*-123#^2 /12.7@5.3)-100%(12*2.5)") == 6.0
+
+
+def test_40():
+    assert evaluate("(5+6-7*8+9^2)/2-38&36+(10 @2---10#)*~1") == -23.0
+
+
+# 41 - 44 simple syntax errors
+def test_41():
+    error = validate_legal_symbols("6^3e")
+    assert error[0] is False
+    assert type(error[1]) == SymbolNotRecognized
+
+
+def test_42():
+    error = validate_operators("4~~5")
+    assert error[0] is False
+    assert type(error[1]) == OperatorsNotPositionedValidly
+
+
+def test_43():
+    error = validate_brackets_balance("(4.5+4))")
+    assert error[0] is False
+    assert type(error[1]) == BracketsNotBalanced
+
+
+def test_44():
+    error = validate_brackets_not_empty("4..5+4-()")
+    assert error[0] is False
+    assert type(error[1]) == EmptyBrackets
